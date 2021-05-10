@@ -3,50 +3,54 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.sparse as sparse
 
-mat = scipy.io.loadmat("data/Mtrans.mat")
-M=mat['M']
-M=np.array(M)
-[nn,nn1]=np.shape(M)
-X=np.zeros(nn)
-X[3065]=1.0;
+def draw():
+	mat = scipy.io.loadmat("data/Mtrans.mat")
+	M=mat['M']
+	M=np.array(M)
+	[nn,nn1]=np.shape(M)
+	X=np.zeros(nn)
+	X[3065]=1.0;
+	
+	T=20 # number time steps 
 
-T=20 # number time steps 
+	depth=np.loadtxt("data/odepth.dat")
+	olon=np.loadtxt("data/olon.dat")
+	olat=np.loadtxt("data/olat.dat")
+	islake_row=np.loadtxt("data/islake_row.dat")
+	islake_col=np.loadtxt("data/islake_col.dat")
+	islake_row=islake_row-1
+	islake_col=islake_col-1
 
-depth=np.loadtxt("data/odepth.dat")
-olon=np.loadtxt("data/olon.dat")
-olat=np.loadtxt("data/olat.dat")
-islake_row=np.loadtxt("data/islake_row.dat")
-islake_col=np.loadtxt("data/islake_col.dat")
-islake_row=islake_row-1
-islake_col=islake_col-1
+	glc=np.loadtxt("data/GLcoast.dat")
+	fig = plt.figure(figsize=(10, 8))
+	lon=glc[:,0]
+	lat=glc[:,1]
+	plt.plot(lon, lat,color='black')
+	plt.xlim([np.amin(olon)-0.25, np.amax(olon)+0.25])
+	plt.ylim([np.amin(olat)-0.2, np.amax(olat)+0.2])
+	plt.title('Lake Ontario')
+	PD=np.ones(np.shape(depth))*0.0
+	PD[depth==0]=np.nan
+	mask=np.ones(np.shape(depth))
+	mask[depth==0]=0.0
 
-glc=np.loadtxt("data/GLcoast.dat")
-fig = plt.figure(figsize=(10, 8))
-lon=glc[:,0]
-lat=glc[:,1]
-plt.plot(lon, lat,color='black')
-plt.xlim([np.amin(olon)-0.25, np.amax(olon)+0.25])
-plt.ylim([np.amin(olat)-0.2, np.amax(olat)+0.2])
-plt.title('Lake Ontario')
-PD=np.ones(np.shape(depth))*0.0
-PD[depth==0]=np.nan
-mask=np.ones(np.shape(depth))
-mask[depth==0]=0.0
+	PD[depth==0]=np.nan
+	M1=np.copy(M)
+	islake_row = islake_row.astype(int)
+	islake_col = islake_col.astype(int)
 
-PD[depth==0]=np.nan
-M1=np.copy(M)
-islake_row = islake_row.astype(int)
-islake_col = islake_col.astype(int)
+	masking = (depth>0)
 
-masking = (depth>0)
+	for i in range (1,T):
+		t=sparse.csr_matrix(X)*sparse.csr_matrix(M1)
+		M1=sparse.csr_matrix(M)*sparse.csr_matrix(M1)
 
-for i in range (1,T):
-	t=sparse.csr_matrix(X)*sparse.csr_matrix(M1)
-	M1=sparse.csr_matrix(M)*sparse.csr_matrix(M1)
+		t=t.todense()
+		PD[islake_row,islake_col]=t
+		plt.pcolor(olon,olat,PD,cmap='BuGn')
+		#plt.savefig(f"pic/test{i}.svg")
+		plt.pause(0.05)
 
-	t=t.todense()
-	PD[islake_row,islake_col]=t
-	plt.pcolor(olon,olat,PD,cmap='BuGn')
-#    plt.savefig(f"test{i}.svg")
-	plt.pause(0.05)
-
+if __name__ == "__main__":
+	draw()
+	
