@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>WebSocket demo</title>
-    </head>
-    <body>
-        <script>
-            var ws = new WebSocket("ws://127.0.0.1:5678/"),
-                messages = document.createElement('ul');
-            ws.onmessage = function (event) {
-                var messages = document.getElementsByTagName('ul')[0],
-                    message = document.createElement('li'),
-                    content = document.createTextNode(event.data);
-                message.appendChild(content);
-                messages.appendChild(message);
-            };
-            document.body.appendChild(messages);
-        </script>
-    </body>
+	<head>
+		<title>WebSocket demo</title>
+	</head>
+	<body>
+		<div id="pic"></div>
+		<script>
+			var ws = new WebSocket("ws://127.0.0.1:5678/");
+	
+			ws.onopen = function(event) {
+	 			ws.send("args");
+	 		};
+	
+	     	ws.onmessage = function (event) {
+				var anchor = document.getElementById("pic");
+				
+				anchor.innerHTML = event.data;
+			};
+		</script>
+	</body>
 </html>
 
