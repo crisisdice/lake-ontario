@@ -1,23 +1,13 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>WebSocket demo</title>
+		<title>Lake Ontario</title>
 	</head>
 	<body>
-		<div id="pic"></div>
-		<script>
-			var ws = new WebSocket("ws://127.0.0.1:5678/");
-	
-			ws.onopen = function(event) {
-	 			ws.send("args");
-	 		};
-	
-	     	ws.onmessage = function (event) {
-				var anchor = document.getElementById("pic");
-				
-				anchor.innerHTML = event.data;
-			};
-		</script>
+		<div id="container" onclick="handle_click(event)"> 
+			<img src="lake.svg"/>
+		</div>
+		<script src="app.js"></script>
 	</body>
 </html>
 
