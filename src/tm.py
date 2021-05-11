@@ -27,40 +27,50 @@ class MatrixDraw:
 		self.transition_matrix = np.array(scipy.io.loadmat("data/Mtrans.mat")['M'])
 		self.dim = np.shape(self.transition_matrix)[0]
 
-	async def draw(self, steps):
-		X = np.zeros(self.dim)
-		X[3065] = 1.0;
-
+	def draw_canvas(self):
 		fig = plt.figure(figsize = (10, 8))
 		lon = self.glc[:,0]
 		lat = self.glc[:,1]
-
+	
 		plt.plot(lon, lat,color = 'black')
-		plt.xlim([np.amin(self.olon)-0.25, np.amax(self.olon)+0.25])
-		plt.ylim([np.amin(self.olat)-0.2, np.amax(self.olat)+0.2])
+		plt.xlim([np.amin(self.olon) - 0.25, np.amax(self.olon) + 0.25])
+		plt.ylim([np.amin(self.olat) - 0.2, np.amax(self.olat) + 0.2])
 		plt.title('Lake Ontario')
-
-		PD = np.ones(np.shape(self.depth))*0.0
-		PD[self.depth == 0] = np.nan
+	
+		lake = np.ones(np.shape(self.depth)) * 0.0
+		lake[self.depth == 0] = np.nan
 		mask = np.ones(np.shape(self.depth))
 		mask[self.depth == 0] = 0.0
-		PD[self.depth == 0] = np.nan
-
-		transition_matrix1 = np.copy(self.transition_matrix)
+		lake[self.depth == 0] = np.nan
+	
 		masking = (self.depth>0)
 
+		return lake
+
+	async def draw(self, steps):
+		state_vector = np.zeros(self.dim)
+		state_vector[3065] = 1.0;
+
+		transition_matrix1 = np.copy(self.transition_matrix)
+
+		if not HEADLESS:
+			lake = self.draw_canvas()
+
 		for i in range (1, steps):
-			t = sparse.csr_matrix(X) * sparse.csr_matrix(transition_matrix1)
+			if HEADLESS:
+				lake = self.draw_canvas()
+
+			t = sparse.csr_matrix(state_vector) * sparse.csr_matrix(transition_matrix1)
 			transition_matrix1 = sparse.csr_matrix(self.transition_matrix) * sparse.csr_matrix(transition_matrix1)
 			t = t.todense()
 
-			PD[self.islake_row, self.islake_col] = t
-			plt.pcolor(self.olon, self.olat, PD, cmap = 'BuGn')
+			lake[self.islake_row, self.islake_col] = t
+			plt.pcolor(self.olon, self.olat, lake, cmap = 'BuGn', shading = 'auto')
 
-			if self.websocket is not None:
+			if HEADLESS:
 				data = io.StringIO()
 				plt.savefig(data, format="svg")
-				print(f"Sending {i} of {steps}")
+				print(f"Sending {i} of {steps - 1}")
 				await self.websocket.send(data.getvalue())
 
 			else:
@@ -68,9 +78,9 @@ class MatrixDraw:
 
 async def process(websocket, path, md):
 	md.websocket = websocket
-	coords = await websocket.recv()
-	print(coords)
-	await md.draw(20)
+	async for message in websocket:
+		print(message)
+		await md.draw(20)
 
 if __name__ == "__main__":
 	md = MatrixDraw()
