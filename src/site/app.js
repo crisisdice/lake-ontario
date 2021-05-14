@@ -21,14 +21,16 @@ function get_ws(x, y) {
 	let ws = new WebSocket("ws://127.0.0.1:5678/");
 
 	ws.onopen = function() {
-		let lat = -75.847104 - ((863 - x) * 0.00572);
-		let lng = 42.964627 + ((683 - y) * 0.00253);
+		let lng = -75.847104 - ((863 - x) * 0.00572);
+		let lat = 42.964627 + ((683 - y) * 0.00253);
 
-		console.info(`Sending x: ${lat} y: ${lng} to server`);
+		console.info(`Sending x: ${lng} y: ${lat} to server`);
 
 		const obj = { 
 			lat: lat,
-			lng: lng
+			lng: lng,
+			season: document.getElementById("season"),
+			id: uuid()
 		};
 
 		ws.send(JSON.stringify(obj));
@@ -44,4 +46,10 @@ function get_ws(x, y) {
 	}
 
 	return ws;
+}
+
+function uuid() {
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
 }
