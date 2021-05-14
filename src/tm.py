@@ -69,10 +69,6 @@ class MatrixDraw:
 		return sv
 
 	def initcoord(self, lat, lng, mask):
-#		X=np.zeros(self.dim)
-#		X[123] = 1.0
-#		return X
-
 		[x,y]= self.lonlat2xy(lat, lng)
 		ii=math.floor(x/2000);
 		jj=math.floor(y/2000);
@@ -145,7 +141,7 @@ class MatrixDraw:
 		t = t.todense()
 
 		lake[self.islake_row, self.islake_col] = t
-		plt.pcolormesh(self.olon, self.olat, lake, cmap = 'BuGn', shading = 'auto')
+		plt.pcolor(self.olon, self.olat, lake, cmap = 'BuGn', shading = 'auto')
 
 		return transition_matrix_copy
 
