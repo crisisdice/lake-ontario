@@ -1,5 +1,17 @@
 let ws = null;
 
+load_svg();
+
+async function load_svg() {
+	let anchor = document.getElementById("container");
+
+	let url = new URL("http://localhost:8000/slake.svg");
+	let f = await fetch(url);
+	let s = await f.text();
+
+	anchor.innerHTML = s;
+}
+
 function handle_click(e) {
 	let x = e.offsetX;
 	let y = e.offsetY;
@@ -37,7 +49,7 @@ function get_ws(x, y) {
 	};
 
   	ws.onmessage = function(event) {
-		var anchor = document.getElementById("container");
+		let anchor = document.getElementById("container");
 		anchor.innerHTML = event.data;
 	};
 
