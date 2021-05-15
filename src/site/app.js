@@ -1,56 +1,39 @@
-let ws = null;
-
-load_svg();
-
-async function load_svg() {
-	let anchor = document.getElementById("container");
-
-	let url = new URL("http://localhost:8000/slake.svg");
-	let f = await fetch(url);
-	let s = await f.text();
-
-	anchor.innerHTML = s;
+function load_svg() {
+	fetch(new URL("/lake.svg", location.origin))
+		.then(response => response.text())
+		.then(text => { 
+			document.getElementById("container").innerHTML = text;
+		});
 }
 
-function handle_click(e) {
-	let x = e.offsetX;
-	let y = e.offsetY;
+function handle_click(event) { 
+	const id = event.path[0]?.id;
 
-	if (!validate_coords(x, y))
+	if (id === null || isNaN(parseInt(id)))
 		return;
 
 	if (ws?.readyState == WebSocket.OPEN)
-		ws.close();
+		ws.close()
 
-	ws = get_ws(x, y);
-}
-
-function validate_coords(x, y) {
-	return (118 < x && x < 864) && (91 < y && y < 684);
-}
-
-function get_ws(x, y) {
-	let ws = new WebSocket("ws://127.0.0.1:5678/");
-
-	ws.onopen = function() {
-		let lng = -75.847104 - ((863 - x) * 0.00572);
-		let lat = 42.964627 + ((683 - y) * 0.00253);
-
-		console.info(`Sending x: ${lng} y: ${lat} to server`);
-
-		const obj = { 
-			lat: lat,
-			lng: lng,
-			season: document.getElementById("season"),
-			id: uuid()
-		};
-
-		ws.send(JSON.stringify(obj));
+	const request = { 
+		node: id,
+		season: document.getElementById("season").value,
 	};
 
-  	ws.onmessage = function(event) {
-		let anchor = document.getElementById("container");
-		anchor.innerHTML = event.data;
+	ws = connect(request);
+}
+
+function connect(request) {
+	const ws = new WebSocket("ws://127.0.0.1:5678/");
+
+	ws.onopen = function() {
+		ws.send(JSON.stringify(request));
+	};
+
+  	ws.onmessage = function(message) {
+		let body = JSON.parse(message.data);
+		reset_lake();
+		color_lake(body.nodes);
 	};
 
 	ws.onclose = function() {
@@ -60,8 +43,16 @@ function get_ws(x, y) {
 	return ws;
 }
 
-function uuid() {
-  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-  );
+function reset_lake() {
+	const lake = Array.prototype.slice.call(document.getElementById("lake").children);
+	lake.forEach(water => {
+		water.style.fill = "rgb(247, 252, 253)";
+	});
+}
+
+function color_lake(nodes) {
+	nodes.forEach(node => {
+		const water = document.getElementById(node.id);
+		water.style.fill = node.color;
+	});
 }
