@@ -1,6 +1,7 @@
 import asyncio
 import functools as f
 import json
+import json.decoder as jsd
 import logging
 import sys
 import traceback
@@ -17,6 +18,9 @@ async def handler(websocket, path, artist):
 
 		request = await websocket.recv()
 		body = json.loads(request)
+
+		artist.validate_matrix_request(body["node"], body["season"])
+
 		sv = artist.get_state_vector(body["node"])
 
 		logging.info(f"Processing {request} from {ip}")
@@ -26,6 +30,8 @@ async def handler(websocket, path, artist):
 			await websocket.send(json.dumps({ "nodes": await task }))
 	except wse.ConnectionClosedError:
 		logging.debug(f"Client {ip} closed connection")
+	except (KeyError, ValueError, jsd.JSONDecodeError):
+		logging.error(f"Faulty request {request} from {ip}")
 
 def initialize():
 	try:

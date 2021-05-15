@@ -8,6 +8,7 @@ import scipy.sparse as sparse
 class MatrixDraw:
 	def __init__(self, settings):
 		try:
+			self.dim = settings["dimension"]
 			self.steps = settings["steps"]
 			self.sensitivity = settings["sensitivity"]
 			self.cmap = mpcm.get_cmap(settings["colormap"])
@@ -33,9 +34,16 @@ class MatrixDraw:
 		return  f"rgb({rgba[0]}, {rgba[1]}, {rgba[2]})"
 
 	def get_state_vector(self, node_id):
-		sv = np.zeros(4732)
+		sv = np.zeros(self.dim)
 		sv[int(node_id)] = 1.0
 		return sv
+
+	def validate_matrix_request(self, node, season):
+		valid_node = type(node) == int and node > -1 and node < self.dim
+		valid_season = season in [ "spring", "summer", "fall", "winter"]
+
+		if not valid_node or not valid_season:
+			raise ValueError()
 
 	async def draw_frame(self, state_vector, iteration):
 		tm = self.transition_matricies[str(iteration)]
