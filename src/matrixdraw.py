@@ -6,14 +6,17 @@ import scipy.io
 import scipy.sparse as sparse
 
 class MatrixDraw:
-	def __init__(self):
-		self.sensitivity = 0.01
-		self.steps = 30
-		self.cmap = mpcm.get_cmap("BuGn")
-		self.norm = mpcol.Normalize(vmin=self.sensitivity, vmax=self.sensitivity * 10)
+	def __init__(self, settings):
+		try:
+			self.steps = settings["steps"]
+			self.sensitivity = settings["sensitivity"]
+			self.cmap = mpcm.get_cmap(settings["colormap"])
+			self.norm = mpcol.Normalize(vmin=self.sensitivity, vmax=self.sensitivity * 10)
 
-		transition_matrix = np.array(scipy.io.loadmat("data/Mtrans.mat")['M'])	
-		self.transition_matricies = self.init_transition_matricies(transition_matrix)
+			transition_matrix = np.array(scipy.io.loadmat(settings["dir"])['M'])
+			self.transition_matricies = self.init_transition_matricies(transition_matrix)
+		except KeyError:
+			raise ValueError("Missing setting in matrix settings")
 
 	def init_transition_matricies(self, transition_matrix):
 		initial_transition_matrix = np.copy(transition_matrix)

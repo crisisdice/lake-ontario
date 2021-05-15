@@ -12,6 +12,9 @@ from matrixdraw import MatrixDraw
 async def handler(websocket, path, artist):
 	try:
 		ip = websocket.remote_address[0]
+
+		logging.info(f"Connection from {ip}")
+
 		request = await websocket.recv()
 		body = json.loads(request)
 		sv = artist.get_state_vector(body["node"])
@@ -24,28 +27,41 @@ async def handler(websocket, path, artist):
 	except wse.ConnectionClosedError:
 		logging.debug(f"Client {ip} closed connection")
 
-def start(artist):
-	start_server = websockets.serve(f.partial(handler, artist = artist), "127.0.0.1", 5678)
-	asyncio.get_event_loop().run_until_complete(start_server)
-	asyncio.get_event_loop().run_forever()
-
-if __name__ == "__main__":
+def initialize():
 	try:
+		settings = json.loads(open("appsettings.json").read())
+		ls = settings["logging"]
 		logging.basicConfig(
-			format='%(asctime)s [%(threadName)s] %(levelname)s: %(message)s', 
-			level=logging.INFO, 
-			handlers = [
-				logging.FileHandler("logs/server.log"),
-				logging.StreamHandler(sys.stdout)
-			]
-		)
-		md = MatrixDraw()
+				format=ls["format"],
+				level=logging.getLevelName(ls["level"]),
+				handlers = [
+					logging.FileHandler(ls["dir"]),
+					logging.StreamHandler(sys.stdout)
+		])
+		artist = MatrixDraw(settings["matrix"])
 
-		logging.info("Initialized and starting server")
-	
+		logging.info("Initialized")
+
+		return (artist, settings)
 	except Exception:
 		logging.error(f"Not initialized: {traceback.format_exc()}")
 		raise
 
-	start(md)
+def start(artist, settings):
+	try:
+		logging.info("Starting server")
+
+		start_server = websockets.serve(
+			f.partial(handler, artist = artist),
+			settings["origin"],
+			settings["socket_port"]
+		)
+		asyncio.get_event_loop().run_until_complete(start_server)
+		asyncio.get_event_loop().run_forever()
+	except Exception:
+		logging.error(f"Server not started: {traceback.format_exc()}")
+		raise
+
+if __name__ == "__main__":
+	start(*initialize())
 
