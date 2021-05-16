@@ -1,20 +1,20 @@
 from matplotlib.cm import get_cmap
 from matplotlib.colors import Normalize
-from numpy import array, copy, zeros
+from numpy import array, copy, shape, zeros
 from scipy.io import loadmat
 from scipy.sparse import csr_matrix
 
 class MatrixDraw:
 	def __init__(self, settings):
-		self.dim = settings["dimension"]
+		transition_matrix = array(loadmat(settings["dir"])['M'])
+		initial_transition_matrix = copy(transition_matrix)
+
+		self.dim = shape(transition_matrix)[0]
 		self.steps = settings["steps"]
 		self.sensitivity = settings["sensitivity"]
 		self.cmap = get_cmap(settings["colormap"])
 		self.norm = Normalize(vmin=self.sensitivity, vmax=self.sensitivity * 10)
 		self.transition_matricies = {}
-
-		transition_matrix = array(loadmat(settings["dir"])['M'])
-		initial_transition_matrix = copy(transition_matrix)
 
 		for power in range(1, self.steps):
 			iteration = csr_matrix(transition_matrix) * csr_matrix(initial_transition_matrix)
