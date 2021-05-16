@@ -1,3 +1,5 @@
+let ws = null;
+
 function load_svg() {
 	fetch(new URL("/lake.svg", location.origin))
 		.then(response => response.text())
@@ -7,13 +9,18 @@ function load_svg() {
 }
 
 function handle_click(event) {
-	const id = event.path[0]?.id;
+	let target = event.target;
+	let id = target?.id;
 
 	if (id === null || isNaN(parseInt(id)))
 		return;
 
 	if (ws?.readyState == WebSocket.OPEN)
-		ws.close()
+		ws.close();
+
+	reset_lake();
+	update_title(0);
+	target.style.fill = "rgb(0, 68, 27)";
 
 	const request = {
 		node: parseInt(id),
@@ -26,7 +33,6 @@ function handle_click(event) {
 function connect(request) {
 	const ws = new WebSocket(`ws://${location.host}/websocket`);
 	let counter = 0;
-	update_title(counter);
 
 	ws.onopen = function() {
 		ws.send(JSON.stringify(request));

@@ -6,8 +6,9 @@
 		<link rel="stylesheet" href="stylesheet.css">
 		<link rel="icon" href="favicon.ico" type="image/x-icon" />
 		<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+		<script src="app.js"></script>
 	</head>
-	<body>
+	<body onload="load_svg()">
 		<div class="container">
 			<div id="title">Lake Ontario</div>
 			<div id="display" onclick="handle_click(event)"></div>
@@ -23,12 +24,6 @@
 				<input type="range" min="1" max="100" value="50" class="slider" id="intensity">
 			</div>
 		</div>
-		<script src="app.js"></script>
-		<script>
-			let ws = null;
-
-			load_svg();
-		</script>
 	</body>
 </html>
 
