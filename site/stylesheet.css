@@ -1,0 +1,30 @@
+body
+{
+	font-family: 'Helvetica', 'Arial', sans-serif;
+	color: #444444;
+	background-color: #FAFAFA;
+}		
+#title {
+	font-size: 30pt;
+	font-weight: bold;
+	background-color: #ABDFCA;
+	width: 720pt;
+	margin: auto;
+}
+.options {
+	font-size: 20pt;
+	width: 720pt;
+	background-color: #ABDFCA;
+	margin: auto;
+}
+.container {
+	text-align: center;
+}
+#season, .slider, .label {
+	display: inline;
+	margin: 2px 2px 2px 2px;
+}
+select {
+	font-size: 15pt;
+}
+

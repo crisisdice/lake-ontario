@@ -2,16 +2,27 @@
 <html>
 	<head>
 		<title>Lake Ontario</title>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="stylesheet.css">
+		<link rel="icon" href="favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
 	</head>
 	<body>
-		<div id="container" onclick="handle_click(event)">
+		<div class="container">
+			<div id="title">Lake Ontario</div>
+			<div id="display" onclick="handle_click(event)"></div>
+			<div class="options">
+				<div class="label">Season: </div>
+				<select id="season">
+					<option value="spring">Spring</option>
+					<option value="summer">Summer</option>
+					<option value="fall">Fall</option>
+					<option value="winter">Winter</option>
+				</select>
+				<div class="label">Intensity: </div>
+				<input type="range" min="1" max="100" value="50" class="slider" id="intensity">
+			</div>
 		</div>
-		<select id="season">
-			<option value="spring">Spring</option>
-			<option value="summer">Summer</option>
-			<option value="fall">Fall</option>
-			<option value="winter">Winter</option>
-		</select>
 		<script src="app.js"></script>
 		<script>
 			let ws = null;

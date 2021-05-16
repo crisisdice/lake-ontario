@@ -2,7 +2,7 @@ function load_svg() {
 	fetch(new URL("/lake.svg", location.origin))
 		.then(response => response.text())
 		.then(text => {
-			document.getElementById("container").innerHTML = text;
+			document.getElementById("display").innerHTML = text;
 		});
 }
 
@@ -25,6 +25,8 @@ function handle_click(event) {
 
 function connect(request) {
 	const ws = new WebSocket(`ws://${location.host}/websocket`);
+	let counter = 0;
+	update_title(counter);
 
 	ws.onopen = function() {
 		ws.send(JSON.stringify(request));
@@ -34,6 +36,8 @@ function connect(request) {
 		let body = JSON.parse(message.data);
 		reset_lake();
 		color_lake(body.nodes);
+		counter += 1;
+		update_title(counter);
 	};
 
 	ws.onclose = function() {
@@ -55,4 +59,14 @@ function color_lake(nodes) {
 		const water = document.getElementById(node.id);
 		water.style.fill = node.color;
 	});
+}
+
+function update_title(counter) {
+	let title = "Lake Ontario";
+	let title_holder = document.getElementById("title");
+
+	if (counter > 0)
+		title = `${title} - ${counter * 2} days`;
+
+	title_holder.innerHTML = title;
 }
