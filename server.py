@@ -19,9 +19,7 @@ def initialize():
 		logging.basicConfig(
 				format=ls["format"],
 				level=logging.getLevelName(ls["level"]),
-				handlers = [
-					logging.FileHandler(ls["dir"]),
-					logging.StreamHandler(stdout)])
+				handlers = [logging.StreamHandler(stdout)])
 
 		artist = MatrixDraw(settings["matrix"])	
 		logging.info("Initialized")
