@@ -16,7 +16,7 @@ function handle_click(event) {
 		ws.close()
 
 	const request = {
-		node: id,
+		node: parseInt(id),
 		season: document.getElementById("season").value,
 	};
 
@@ -24,7 +24,7 @@ function handle_click(event) {
 }
 
 function connect(request) {
-	const ws = new WebSocket("ws://127.0.0.1:5678/");
+	const ws = new WebSocket(`ws://${location.host}/websocket`);
 
 	ws.onopen = function() {
 		ws.send(JSON.stringify(request));
