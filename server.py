@@ -1,6 +1,5 @@
 from json import loads
 from matrixdraw import MatrixDraw
-from matrixstore import MatrixStore
 from os import getcwd
 from os.path import join
 from sys import stdout
