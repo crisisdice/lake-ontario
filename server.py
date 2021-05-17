@@ -21,13 +21,9 @@ def initialize(seed):
 				level=logging.getLevelName(ls["level"]),
 				handlers = [logging.StreamHandler(stdout)])
 
-		store = MatrixStore(settings["matrix"], options.remote)
+		#store = MatrixStore(settings["matrix"])
 
-		artist = MatrixDraw(settings["matrix"], store)
-
-		if seed:
-			logging.info("Seeding database")
-			artist.store.seed()
+		artist = MatrixDraw(settings["matrix"], options.remote)
 
 		logging.info("Initialized")
 

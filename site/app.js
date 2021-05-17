@@ -25,7 +25,8 @@ function handle_click(event) {
 	const request = {
 		node: parseInt(id),
 		season: document.getElementById("season").value,
-		intensity: parseInt(document.getElementById("intensity").value)
+		intensity: parseInt(document.getElementById("intensity").value),
+		uid: get_uid()
 	};
 
 	ws = connect(request);
@@ -57,7 +58,7 @@ function connect(request) {
 function reset_lake() {
 	const lake = Array.prototype.slice.call(document.getElementById("lake").children);
 	lake.forEach(water => {
-		water.style.fill = "rgb(247, 252, 253)";
+		water.style.fill = "rgb(12, 7, 134)";
 	});
 }
 
@@ -76,4 +77,10 @@ function update_title(counter) {
 		title = `${title} - ${counter * 2} days`;
 
 	title_holder.innerHTML = title;
+}
+
+function get_uid() {
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
 }

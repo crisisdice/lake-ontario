@@ -19,12 +19,12 @@ class WebSocket(WebSocketHandler):
 	def on_message(self, message):
 		try:
 			body = loads(message)
-			self.artist.validate_matrix_request(body["node"], body["season"], body["intensity"])
+			#self.artist.validate_matrix_request(body["node"], body["season"], body["intensity"])
 			sv = self.artist.get_state_vector(body["node"], body["intensity"])
 			info(f"Processing {message} from {self.ip}")
 	
 			for step in range (1, self.artist.steps):
-				result = yield self.draw_task(sv, body["season"], step)
+				result = yield self.draw_task(sv, body["season"], step, body["uid"])
 				yield self.write_message(dumps({ "nodes": result }))
 	
 			self.close()
@@ -33,9 +33,10 @@ class WebSocket(WebSocketHandler):
 			debug(f"Connection from {self.ip} closed by client")
 		except (KeyError, ValueError, JSONDecodeError):
 			error(f"Faulty request {message} from {self.ip}")
+			raise
 
 	@coroutine
-	def draw_task(self, state_vector, season, step):
-		frame = self.artist.draw_frame(state_vector, season, step)
-		yield sleep(0.1)
+	def draw_task(self, state_vector, season, step, uid):
+		frame = self.artist.draw_frame(state_vector, season, step, uid)
+		yield sleep(0)
 		return frame

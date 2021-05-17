@@ -1,1 +1,1 @@
-web: python server.py --port=$PORT --seed --remote
+web: python server.py --port=$PORT --remote
