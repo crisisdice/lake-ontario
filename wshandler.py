@@ -37,5 +37,5 @@ class WebSocket(WebSocketHandler):
 	@coroutine
 	def draw_task(self, state_vector, season, step):
 		frame = self.artist.draw_frame(state_vector, season, step)
-		yield sleep(0.5)
+		yield sleep(0.1)
 		return frame

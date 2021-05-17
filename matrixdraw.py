@@ -14,9 +14,10 @@ class MatrixDraw:
 		self.cmap = get_cmap(settings["colormap"])
 		self.norm = Normalize(vmin=self.sensitivity, vmax=self.sensitivity * 10)
 
-	def validate_matrix_request(self, node, season):
+	def validate_matrix_request(self, node, season, intensity):
 		valid_node = type(node) == int and node > -1 and node < self.dim
 		valid_season = season in [ "spring", "summer", "fall", "winter"]
+		valid_intensity = type(intensity) == int and intensity % 2 == 0 and intensity > 0 and intensity < 11
 
 		if not valid_node or not valid_season:
 			raise ValueError()
