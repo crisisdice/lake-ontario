@@ -25,6 +25,7 @@ function handle_click(event) {
 	const request = {
 		node: parseInt(id),
 		season: document.getElementById("season").value,
+		intensity: parseInt(document.getElementById("intensity").value)
 	};
 
 	ws = connect(request);
