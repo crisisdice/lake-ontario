@@ -3,10 +3,11 @@ from scipy.io import loadmat
 from scipy.sparse import csr_matrix
 
 import redis
+import os
 
 class MatrixStore:
-	def __init__(self, settings):
-		self.db = redis.Redis()
+	def __init__(self, settings, remote):
+		self.db = os.environ.get("REDIS_URL") if remote else redis.Redis()
 		self.shape = (settings["dim"], settings["dim"])
 		self.steps = settings["steps"]
 		self.seasons = settings["seasons"]

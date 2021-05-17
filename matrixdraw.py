@@ -1,13 +1,12 @@
 from matplotlib.cm import get_cmap
 from matplotlib.colors import Normalize
-from matrixstore import MatrixStore
 from numpy import array, copy, shape, zeros
 from scipy.io import loadmat
 from scipy.sparse import csr_matrix
 
 class MatrixDraw:
-	def __init__(self, settings):
-		self.store = MatrixStore(settings)
+	def __init__(self, settings, store):
+		self.store = store
 		self.dim = settings["dim"]
 		self.steps = settings["steps"]
 		self.sensitivity = settings["sensitivity"]

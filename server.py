@@ -1,5 +1,6 @@
 from json import loads
 from matrixdraw import MatrixDraw
+from matrixstore import MatrixStore
 from os import getcwd
 from os.path import join
 from sys import stdout
@@ -20,7 +21,9 @@ def initialize(seed):
 				level=logging.getLevelName(ls["level"]),
 				handlers = [logging.StreamHandler(stdout)])
 
-		artist = MatrixDraw(settings["matrix"])
+		store = MatrixStore(settings["matrix"], options.remote)
+
+		artist = MatrixDraw(settings["matrix"], store)
 
 		if seed:
 			logging.info("Seeding database")
@@ -54,6 +57,7 @@ if __name__ == "__main__":
 	#define options
 	define("port", default="8000", help="Listening port", type=str)
 	define("seed", default=False, help="Seed redis cache with matricie")
+	define("remote", default=False, help="Use remote redis instance")
 	options.parse_command_line()
 
 	artist = initialize(options.seed)
