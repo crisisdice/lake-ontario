@@ -5,6 +5,8 @@ from tornado.iostream import StreamClosedError
 from tornado.gen import coroutine, sleep
 from tornado.websocket import WebSocketHandler, WebSocketClosedError
 
+import redis
+import os
 
 class WebSocket(WebSocketHandler):
 	def initialize(self, artist):
@@ -27,7 +29,13 @@ class WebSocket(WebSocketHandler):
 				result = yield self.draw_task(sv, body["season"], step, body["uid"])
 				yield self.write_message(dumps({ "nodes": result }))
 	
+			store = redis.from_url(os.environ.get("REDIS_URL"))
+
+			store.delete(body["uid"])
+
 			self.close()
+
+			info(f'Processed {body["uid"]}')
 
 		except (WebSocketClosedError, StreamClosedError):
 			debug(f"Connection from {self.ip} closed by client")

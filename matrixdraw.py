@@ -1,9 +1,10 @@
 from matplotlib.cm import get_cmap
 from matplotlib.colors import Normalize
 from numpy import array, copy, frombuffer, shape, zeros
-from scipy.io import loadmat
+from scipy.io import loadmat, savemat
 from scipy.sparse import csr_matrix
 
+import io
 import numpy as np
 import redis
 import os
@@ -42,14 +43,20 @@ class MatrixDraw:
 		if iteration == 1:
 			multiplicand = copy(M)
 		else:
-			multiplicand = frombuffer(self.store.get(uid)).reshape(*self.shape)
+			multiplicand = array(loadmat(io.BytesIO(self.store.get(uid)))['M'])
 
 		t = csr_matrix(state_vector) * csr_matrix(multiplicand)
 		multiplicand = csr_matrix(M) * csr_matrix(multiplicand)
 		vector = t.todense()
 		values = vector.A1
+	
+		stream = io.BytesIO()
 
-		self.store.set(uid, multiplicand.toarray().tobytes())
+		savemat(stream, { "M": multiplicand.toarray() })
+		
+		stream.seek(0)
+	
+		self.store.set(uid, stream.read())
 
 		norm = Normalize(vmin=0, vmax=np.max(vector))
 
