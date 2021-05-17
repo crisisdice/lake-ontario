@@ -9,6 +9,7 @@ from tornado.websocket import WebSocketHandler, WebSocketClosedError
 class WebSocket(WebSocketHandler):
 	def initialize(self, artist):
 		self.artist = artist
+		#TODO get ip from header
 		self.ip = self.request.remote_ip
 
 	def open(self):
@@ -18,12 +19,12 @@ class WebSocket(WebSocketHandler):
 	def on_message(self, message):
 		try:
 			body = loads(message)
-			self.artist.validate_matrix_request(body["node"], body["season"])
-			sv = self.artist.get_state_vector(body["node"])
+			self.artist.validate_matrix_request(body["node"], body["season"], body["intensity"])
+			sv = self.artist.get_state_vector(body["node"], body["intensity"])
 			info(f"Processing {message} from {self.ip}")
 	
 			for step in range (1, self.artist.steps):
-				result = yield self.draw_task(sv, step)
+				result = yield self.draw_task(sv, body["season"], step)
 				yield self.write_message(dumps({ "nodes": result }))
 	
 			self.close()
@@ -34,7 +35,7 @@ class WebSocket(WebSocketHandler):
 			error(f"Faulty request {message} from {self.ip}")
 
 	@coroutine
-	def draw_task(self, state_vector, step):
-		frame = self.artist.draw_frame(state_vector, step)
+	def draw_task(self, state_vector, season, step):
+		frame = self.artist.draw_frame(state_vector, season, step)
 		yield sleep(0.5)
 		return frame

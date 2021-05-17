@@ -11,18 +11,23 @@ from wshandler import WebSocket
 
 import logging
 
-def initialize():
+def initialize(seed):
 	try:
 		settings = loads(open("appsettings.json").read())
-		define("port", default="8000", help="Listening port", type=str)
 		ls = settings["logging"]
 		logging.basicConfig(
 				format=ls["format"],
 				level=logging.getLevelName(ls["level"]),
 				handlers = [logging.StreamHandler(stdout)])
 
-		artist = MatrixDraw(settings["matrix"])	
+		artist = MatrixDraw(settings["matrix"])
+
+		if seed:
+			logging.info("Seeding database")
+			artist.store.seed()
+
 		logging.info("Initialized")
+
 		return artist
 
 	except Exception:
@@ -46,7 +51,11 @@ def start(artist, port):
 		raise
 
 if __name__ == "__main__":
-	artist = initialize()
+	#define options
+	define("port", default="8000", help="Listening port", type=str)
+	define("seed", default=False, help="Seed redis cache with matricie")
 	options.parse_command_line()
+
+	artist = initialize(options.seed)
 	start(artist, options.port)
 
