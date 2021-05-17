@@ -7,7 +7,7 @@ import os
 
 class MatrixStore:
 	def __init__(self, settings, remote):
-		self.db = os.environ.get("REDIS_URL") if remote else redis.Redis()
+		self.db = resis.from_url(os.environ.get("REDIS_URL")) if remote else redis.Redis()
 		self.shape = (settings["dim"], settings["dim"])
 		self.steps = settings["steps"]
 		self.seasons = settings["seasons"]
