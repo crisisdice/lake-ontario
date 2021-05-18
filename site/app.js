@@ -20,7 +20,7 @@ function handle_click(event) {
 
 	reset_lake();
 	update_title(0);
-	target.style.fill = "rgb(0, 68, 27)";
+	target.style.fill = "rgb(0, 0, 0)";
 
 	const request = {
 		node: parseInt(id),
@@ -56,7 +56,7 @@ function connect(request) {
 function reset_lake() {
 	const lake = Array.prototype.slice.call(document.getElementById("lake").children);
 	lake.forEach(water => {
-		water.style.fill = "rgb(247, 252, 253)";
+		water.style.fill = "rgb(12, 7, 134)";
 	});
 }
 
