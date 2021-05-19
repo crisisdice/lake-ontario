@@ -1,3 +1,4 @@
+from logging import info
 from numpy import array, copy
 from scipy.io import loadmat, savemat
 from scipy.sparse import csr_matrix
@@ -17,7 +18,9 @@ class MatrixStore:
 				multiplicand = result
 
 	def store(self, array, season, power):
-		savemat(self.template(season, power), { 'M': array }, do_compression=True)
+		key = self.template(season, power)
+		info(f"storing {key}")
+		savemat(key, { 'M': array }, do_compression=True)
 
 	def retrieve(self, season, power):
 		return array(loadmat(self.template(season, power))['M'])

@@ -5,12 +5,19 @@ from os import getcwd
 from os.path import join
 from sys import stdout
 from tornado.web import Application, StaticFileHandler
+from tornado.concurrent import run_on_executor
 from tornado.ioloop import IOLoop
 from tornado.options import define, options
 from traceback import format_exc
 from wshandler import WebSocket
 
 import logging
+
+def seed():
+	settings = loads(open("appsettings.json").read())
+	logging.info("Seeding database")
+	store = MatrixStore()
+	store.seed(settings["seasons"], settings["steps"])
 
 def initialize():
 	try:
@@ -22,11 +29,6 @@ def initialize():
 				handlers = [logging.StreamHandler(stdout)])
 
 		store = MatrixStore()
-
-		if options.seed:
-			logging.info("Seeding database")
-			store.seed(settings["seasons"], settings["steps"])
-
 		artist = MatrixDraw(store)
 
 		logging.info("Initialized")
@@ -44,10 +46,12 @@ def start(artist, settings):
 			(r'/(.*)', StaticFileHandler, {
 				"path": join(getcwd(), "site"), 
 				"default_filename": "index.html" })])
-
+		ioloop = IOLoop.instance()
+		if options.seed:
+			ioloop.spawn_callback(seed)
 		server.listen(options.port)
 		logging.info("Starting server")
-		IOLoop.instance().start()
+		ioloop.start()
 
 	except Exception:
 		logging.error(f"Server not started: {format_exc()}")
