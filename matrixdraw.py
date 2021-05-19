@@ -10,7 +10,7 @@ class MatrixDraw:
 	def get_state_vector(self, node_id, intensity, dim):
 		sv = zeros(dim)
 		sv[int(node_id)] = 1.0
-
+		#TODO implement intensity
 		return sv
 
 	def draw_frame(self, state_vector, season, iteration, colormap):

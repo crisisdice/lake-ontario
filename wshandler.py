@@ -14,7 +14,7 @@ class WebSocket(WebSocketHandler):
 		self.dim = options.dim
 		self.cmap = options.cmap
 
-		#TODO get ip from header
+		#TODO get ip from heroku header
 		self.ip = self.request.remote_ip
 
 	def open(self):
@@ -24,12 +24,17 @@ class WebSocket(WebSocketHandler):
 	def on_message(self, message):
 		try:
 			body = loads(message)
-			self.validate_matrix_request(body["node"], body["season"], body["intensity"])
-			sv = self.artist.get_state_vector(body["node"], body["intensity"], self.dim)
+
+			node = body["node"]
+			season = body["season"]
+			intensity = body["intensity"]
+
+			self.validate_matrix_request(node, season, intensity)
 			info(f"Processing {message} from {self.ip}")
+			sv = self.artist.get_state_vector(node, intensity, self.dim)
 	
 			for step in range(1, self.steps):
-				result = yield self.draw_task(sv, body["season"], step)
+				result = yield self.draw_task(sv, season, step)
 				yield self.write_message(dumps({ "nodes": result }))
 	
 			self.close()

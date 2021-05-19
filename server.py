@@ -1,23 +1,14 @@
-from json import loads
 from matrixdraw import MatrixDraw
 from matrixstore import MatrixStore
 from os import getcwd
 from os.path import join
-from sys import stdout
 from tornado.web import Application, StaticFileHandler
-from tornado.concurrent import run_on_executor
 from tornado.ioloop import IOLoop
 from tornado.options import define, options
 from traceback import format_exc
 from wshandler import WebSocket
 
 import logging
-
-def seed():
-	logging.info("Seeding .mat files")
-	tempstore = MatrixStore()
-	tempstore.seed(options.seed.split(','), options.steps)
-	logging.info("Finished seeding .mat files")
 
 def start():
 	try:
@@ -49,6 +40,12 @@ def start():
 		logging.error(f"Server not started: {format_exc()}")
 		raise
 
+def seed():
+	logging.info("Seeding .mat files")
+	tempstore = MatrixStore()
+	tempstore.seed(options.seed.split(','), options.steps)
+	logging.info("Finished seeding .mat files")
+
 if __name__ == "__main__":
 	#define options
 	define("port", default="8000", help="Listening port")
@@ -58,10 +55,9 @@ if __name__ == "__main__":
 	define("dim", default=4732, help="Transition matrix row size")
 	define("seasons", default="spring,summer,fall,winter", help="Comma delimited seasons to show")
 	define("cmap", default="plasma", help="Matplotlib colormap to apply to matrix")
+	#TODO recompile svg
 
 	options.parse_command_line()
 
-	print(options.loglevel)
-	print(logging.getLevelName(options.loglevel))
 	start()
 
