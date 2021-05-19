@@ -24,7 +24,7 @@ function handle_click(event) {
 
 	const request = {
 		node: parseInt(id),
-		season: document.getElementById("season").value,
+		season: "fall", //document.getElementById("season").value,
 		intensity: parseInt(document.getElementById("intensity").value)
 	};
 
@@ -70,10 +70,9 @@ function color_lake(nodes) {
 
 function update_title(counter) {
 	let title = "Lake Ontario";
-	let title_holder = document.getElementById("title");
 
 	if (counter > 0)
 		title = `${title} - ${counter * 2} days`;
 
-	title_holder.innerHTML = title;
+	document.getElementById("title").innerHTML = title;
 }

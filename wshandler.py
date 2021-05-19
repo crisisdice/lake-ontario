@@ -23,7 +23,7 @@ class WebSocket(WebSocketHandler):
 			sv = self.artist.get_state_vector(body["node"], body["intensity"])
 			info(f"Processing {message} from {self.ip}")
 	
-			for step in range (1, self.artist.steps):
+			for step in range(1, self.artist.steps):
 				result = yield self.draw_task(sv, body["season"], step)
 				yield self.write_message(dumps({ "nodes": result }))
 	
@@ -37,5 +37,5 @@ class WebSocket(WebSocketHandler):
 	@coroutine
 	def draw_task(self, state_vector, season, step):
 		frame = self.artist.draw_frame(state_vector, season, step)
-		yield sleep(0.1)
+		yield sleep(0)
 		return frame

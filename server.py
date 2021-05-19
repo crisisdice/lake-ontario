@@ -12,22 +12,22 @@ from wshandler import WebSocket
 
 import logging
 
-def initialize(seed):
+def initialize():
 	try:
 		settings = loads(open("appsettings.json").read())
-		ls = settings["logging"]
+
 		logging.basicConfig(
-				format=ls["format"],
-				level=logging.getLevelName(ls["level"]),
+				format=settings["logging"]["format"],
+				level=logging.getLevelName(settings["logging"]["level"]),
 				handlers = [logging.StreamHandler(stdout)])
 
 		store = MatrixStore(settings["matrix"], options.remote)
 
-		artist = MatrixDraw(settings["matrix"], store)
-
-		if seed:
+		if options.seed:
 			logging.info("Seeding database")
-			artist.store.seed()
+			store.seed()
+
+		artist = MatrixDraw(settings["matrix"], store)
 
 		logging.info("Initialized")
 
@@ -37,7 +37,7 @@ def initialize(seed):
 		logging.error(f"Not initialized: {format_exc()}")
 		raise
 
-def start(artist, port):
+def start(artist):
 	try:
 		server = Application([
 			(r'/websocket', WebSocket, { "artist": artist }),
@@ -45,7 +45,7 @@ def start(artist, port):
 				"path": join(getcwd(), "site"), 
 				"default_filename": "index.html" })])
 
-		server.listen(port)
+		server.listen(options.port)
 		logging.info("Starting server")
 		IOLoop.instance().start()
 
@@ -56,10 +56,9 @@ def start(artist, port):
 if __name__ == "__main__":
 	#define options
 	define("port", default="8000", help="Listening port", type=str)
-	define("seed", default=False, help="Seed redis cache with matricie")
-	define("remote", default=False, help="Use remote redis instance")
+	define("seed", default=False, help="Seed database with matricie")
+	define("remote", default=False, help="Use remote database instance")
 	options.parse_command_line()
 
-	artist = initialize(options.seed)
-	start(artist, options.port)
+	start(initialize())
 

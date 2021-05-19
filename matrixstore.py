@@ -5,16 +5,18 @@ from scipy.sparse import csr_matrix
 
 import psycopg2
 import os
+import logging
 
 class MatrixStore:
 	def __init__(self, settings, remote):
-		self.shape = (settings["dim"], settings["dim"])
+		#self.shape = (settings["dim"], settings["dim"])
 		self.steps = settings["steps"]
 		self.seasons = settings["seasons"]
 		self.template = lambda season, power : f"{season}:{power}"
 
-	def seed(self):
-		self.create_table()
+	def seed(self, create_table=False):
+		if create_table:
+			self.create_table()
 
 		file_name = lambda season : f'data/{season}.mat'
 
@@ -62,6 +64,10 @@ class MatrixStore:
 		try:
 			conn = self.get_connection()
 			cur = conn.cursor()
+
+			logging.debug(f"Excecuting {command}")
+			print(f"Excecuting {command}")
+
 			cur.execute(command, (key,))
 			mview = cur.fetchone()
 			cur.close()
