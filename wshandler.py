@@ -38,6 +38,8 @@ class WebSocket(WebSocketHandler):
 			debug(f"Connection from {self.ip} closed by client")
 		except (KeyError, ValueError, JSONDecodeError):
 			error(f"Faulty request {message} from {self.ip}")
+		except Exception as error:
+			error(error)
 
 	@coroutine
 	def draw_task(self, state_vector, season, step):
