@@ -17,35 +17,30 @@ def initialize():
 		settings = loads(open("appsettings.json").read())
 
 		logging.basicConfig(
-				format=settings["logging"]["format"],
-				level=logging.getLevelName(settings["logging"]["level"]),
+				format=settings["logging_format"],
+				level=logging.getLevelName(settings["logging_level"]),
 				handlers = [logging.StreamHandler(stdout)])
 
 		store = MatrixStore()
 
-		seasons = settings["matrix"]["seasons"]
-		steps = settings["matrix"]["steps"]
-		dim = settings["matrix"]["dim"]
-		colormap = settings["matrix"]["colormap"]
-
 		if options.seed:
 			logging.info("Seeding database")
-			store.seed(seasons, steps)
+			store.seed(settings["seasons"], settings["steps"])
 
-		artist = MatrixDraw(store, seasons, steps, dim, colormap)
+		artist = MatrixDraw(store)
 
 		logging.info("Initialized")
 
-		return artist
+		return (artist, settings)
 
 	except Exception:
 		logging.error(f"Not initialized: {format_exc()}")
 		raise
 
-def start(artist):
+def start(artist, settings):
 	try:
 		server = Application([
-			(r'/websocket', WebSocket, { "artist": artist }),
+			(r'/websocket', WebSocket, { "artist": artist, "settings": settings }),
 			(r'/(.*)', StaticFileHandler, {
 				"path": join(getcwd(), "site"), 
 				"default_filename": "index.html" })])
@@ -65,5 +60,5 @@ if __name__ == "__main__":
 	define("remote", default=False, help="Use remote database instance")
 	options.parse_command_line()
 
-	start(initialize())
+	start(*initialize())
 
