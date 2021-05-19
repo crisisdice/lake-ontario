@@ -24,7 +24,7 @@ function handle_click(event) {
 
 	const request = {
 		node: parseInt(id),
-		season: "fall", //document.getElementById("season").value,
+		season: document.getElementById("season").value,
 		intensity: parseInt(document.getElementById("intensity").value)
 	};
 

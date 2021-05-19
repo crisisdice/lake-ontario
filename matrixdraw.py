@@ -5,16 +5,16 @@ from scipy.io import loadmat
 from scipy.sparse import csr_matrix
 
 class MatrixDraw:
-	def __init__(self, settings, store):
+	def __init__(self, store, seasons, steps, dim, colormap):
 		self.store = store
-		self.dim = settings["dim"]
-		self.steps = settings["steps"]
-		self.sensitivity = settings["sensitivity"]
-		self.cmap = get_cmap(settings["colormap"])
+		self.steps = steps
+		self.seasons = seasons
+		self.dim = dim
+		self.cmap = get_cmap(colormap)
 
 	def validate_matrix_request(self, node, season, intensity):
 		valid_node = type(node) == int and node > -1 and node < self.dim
-		valid_season = season in [ "spring", "summer", "fall", "winter"]
+		valid_season = season in self.seasons
 		valid_intensity = type(intensity) == int and intensity % 2 == 0 and intensity > 0 and intensity < 11
 
 		if not valid_node or not valid_season:
@@ -34,5 +34,5 @@ class MatrixDraw:
 
 		get_color = lambda weight, norm: (rgba := self.cmap(norm(weight), bytes=True), f"rgb({rgba[0]}, {rgba[1]}, {rgba[2]})")[-1]
 
-		return [ { "id": str(i), "color": get_color(values[i], norm) } for i in range(len(values)) if values[i] > self.sensitivity ]
+		return [ { "id": str(i), "color": get_color(values[i], norm) } for i in range(len(values)) if values[i] > 0 ]
 
