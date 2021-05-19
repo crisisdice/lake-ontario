@@ -1,4 +1,4 @@
-from logging import info
+from logging import debug, info
 from numpy import array, copy
 from scipy.io import loadmat, savemat
 from scipy.sparse import csr_matrix
@@ -20,8 +20,10 @@ class MatrixStore:
 	def store(self, array, season, power):
 		key = self.template(season, power)
 		info(f"storing {key}")
-		savemat(key, { 'M': array }, do_compression=True)
+		savemat(key, { 'M' : array }, do_compression=True)
 
 	def retrieve(self, season, power):
-		return array(loadmat(self.template(season, power))['M'])
+		key = self.template(season, power)
+		debug(f"retrieving {key}")
+		return array(loadmat(key)['M'])
 

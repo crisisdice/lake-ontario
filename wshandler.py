@@ -7,12 +7,12 @@ from tornado.websocket import WebSocketHandler, WebSocketClosedError
 
 
 class WebSocket(WebSocketHandler):
-	def initialize(self, artist, settings):
+	def initialize(self, artist, options):
 		self.artist = artist
-		self.seasons = settings["seasons"]
-		self.steps = settings["steps"]
-		self.dim = settings["dim"]
-		self.cmap = settings["cmap"]
+		self.seasons = options.seasons.split(',')
+		self.steps = options.steps
+		self.dim = options.dim
+		self.cmap = options.cmap
 
 		#TODO get ip from header
 		self.ip = self.request.remote_ip
@@ -38,8 +38,11 @@ class WebSocket(WebSocketHandler):
 			debug(f"Connection from {self.ip} closed by client")
 		except (KeyError, ValueError, JSONDecodeError):
 			error(f"Faulty request {message} from {self.ip}")
-		except Exception as error:
-			error(error)
+			raise
+		except Exception as ex:
+			error(ex)
+		finally:
+			info(f"Finished with {self.ip}")
 
 	@coroutine
 	def draw_task(self, state_vector, season, step):

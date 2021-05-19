@@ -14,41 +14,33 @@ from wshandler import WebSocket
 import logging
 
 def seed():
-	settings = loads(open("appsettings.json").read())
-	logging.info("Seeding database")
-	store = MatrixStore()
-	store.seed(settings["seasons"], settings["steps"])
+	logging.info("Seeding .mat files")
+	tempstore = MatrixStore()
+	tempstore.seed(options.seed.split(','), options.steps)
+	logging.info("Finished seeding .mat files")
 
-def initialize():
+def start():
 	try:
-		settings = loads(open("appsettings.json").read())
+		logging.basicConfig(format="[%(threadName)s] %(levelname)s: %(message)s")
+		logging.root.level = logging.getLevelName(options.loglevel)
 
-		logging.basicConfig(
-				format=settings["logging_format"],
-				level=logging.getLevelName(settings["logging_level"]),
-				handlers = [logging.StreamHandler(stdout)])
+		logging.debug("DEBUG activated")
 
-		store = MatrixStore()
-		artist = MatrixDraw(store)
+		artist = MatrixDraw(MatrixStore())
 
-		logging.info("Initialized")
-
-		return (artist, settings)
-
-	except Exception:
-		logging.error(f"Not initialized: {format_exc()}")
-		raise
-
-def start(artist, settings):
-	try:
 		server = Application([
-			(r'/websocket', WebSocket, { "artist": artist, "settings": settings }),
+			(r'/websocket', WebSocket, { "artist": artist, "options": options }),
 			(r'/(.*)', StaticFileHandler, {
 				"path": join(getcwd(), "site"), 
 				"default_filename": "index.html" })])
+
 		ioloop = IOLoop.instance()
+
+		logging.info("Artist and server initialized")
+
 		if options.seed:
 			ioloop.spawn_callback(seed)
+
 		server.listen(options.port)
 		logging.info("Starting server")
 		ioloop.start()
@@ -59,10 +51,17 @@ def start(artist, settings):
 
 if __name__ == "__main__":
 	#define options
-	define("port", default="8000", help="Listening port", type=str)
-	define("seed", default=False, help="Seed database with matricie")
-	define("remote", default=False, help="Use remote database instance")
+	define("port", default="8000", help="Listening port")
+	define("seed", default="", help="Comma delimited seasons to calculate .mat files for")
+	define("loglevel", default="INFO", help="Python log level")
+	define("steps", default=10, help="Amount of time steps to calculate and show")
+	define("dim", default=4732, help="Transition matrix row size")
+	define("seasons", default="spring,summer,fall,winter", help="Comma delimited seasons to show")
+	define("cmap", default="plasma", help="Matplotlib colormap to apply to matrix")
+
 	options.parse_command_line()
 
-	start(*initialize())
+	print(options.loglevel)
+	print(logging.getLevelName(options.loglevel))
+	start()
 
