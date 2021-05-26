@@ -1,4 +1,4 @@
-HEADLESS = True
+HEADLESS = False
 
 import scipy.io
 import matplotlib
@@ -139,6 +139,8 @@ class MatrixDraw:
 		t = sparse.csr_matrix(state_vector) * sparse.csr_matrix(transition_matrix)
 		transition_matrix_copy = sparse.csr_matrix(self.transition_matrix) * sparse.csr_matrix(transition_matrix)
 		t = t.todense()
+
+		plt.savefig(f"{iteration}t.svg")
 
 		lake[self.islake_row, self.islake_col] = t
 		plt.pcolor(self.olon, self.olat, lake, cmap = 'BuGn', shading = 'auto')
