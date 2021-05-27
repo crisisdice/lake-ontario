@@ -1,12 +1,18 @@
 :root {
   --width: 70%;
 }
+
 body
 {
 	font-family: 'Helvetica', 'Arial', sans-serif;
 	color: #444444;
 	background-color: #FAFAFA;
-}		
+}
+
+hr {
+    width: var(--width);
+}
+
 #title {
 	font-size: 30pt;
 	font-weight: bold;
@@ -14,20 +20,21 @@ body
 	width: var(--width);
 	margin: 0 auto;
     text-align: center;
+    padding: 1%
 }
+
 .options {
 	font-size: 20pt;
 	width: var(--width);
 	background-color: #ABDFCA;
 	margin: 0 auto;
+    padding: 1%;
+    text-align: center;
 }
+
 #display {
     margin: 0 auto;
-    text-align: center;
     width: var(--width);
-    resize: horizontal;
-    overflow: hidden;
-    height: auto;
 }
 
 .description {
@@ -36,15 +43,47 @@ body
 	background-color: #ABDFCA;
     margin: 0 auto;
 	text-align: block;
+    padding: 1%;
 }
+
 .container {
 	/* text-align: center; */
 }
+
 #season, .slider, .label {
 	display: inline;
 	margin: 2px 2px 2px 2px;
 }
+
 select {
 	font-size: 15pt;
 }
 
+.nav {
+	font-weight: bold;
+	background-color: #ABDFCA;
+	width: var(--width);
+	margin: 0 auto;
+    text-align: center;
+    padding: 1% 
+}
+
+.navlink {
+  background-color: rgb(12, 7, 134);
+  color: white;
+  padding: 0.5em 1em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.navlink:hover {
+  background-color: #555;
+}
+
+.navlink:active {
+  background-color: black;
+}
+
+.navlink :visited {
+  background-color: #ccc;
+}

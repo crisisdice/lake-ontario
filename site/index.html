@@ -11,27 +11,29 @@
 	<body onload="load_svg()">
 		<div class="container">
 			<div id="title">Lake Ontario</div>
-			<div id="display" onclick="handle_click(event)"></div>
-            <div class="description">
-            <b>About</b><br/><br/>
-            This animation shows where floating plastic would likely end up, at different times of the year, from the location you choose in Lake Ontario. The colors correspond to how likely it is the plastic will end up in that spot. We built this model by considering the paths of particles under the influence of lake currents, which came from a forecasting model called the Finite Volume Community Ocean Model (FVCOM).<br/><br/>
-            Our inspiration for this site came from the <a style="display: inline" href="https://plasticadrift.org/">existing global version</a>.
-            <br/><br/>
-            Click on the map to launch the animation.
+            <div class="nav">
+                <a href="faq.html" class="navlink">FAQ</a>
             </div>
-            
-			<div class="options" style="visibility: hidden">
+			<div id="display" onclick="handle_click(event)"></div>
+			<div class="options" style="visibility: visible">
 				<div class="label">Season: </div>
 				<select id="season">
-					<!--option value="spring">Spring</option-->
+					<option value="spring">Spring</option>
 					<option value="summer">Summer</option>
-					<!--option value="fall">Fall</option-->
+					<option value="fall">Fall</option>
 					<option value="winter">Winter</option>
 				</select>
 				<!--div class="label">Intensity: </div>
 				<input type="range" min="1" max="9" value="1" step="2" class="slider" id="intensity"-->
-                
+                <span>Click on the map to launch the animation.</span>
             </div>
+		 <hr>
+         <div class="description">
+            <b>About</b><br><br>
+            This animation shows where floating plastic would likely end up, at different times of the year, from the location you choose in Lake Ontario. The colors correspond to how likely it is the plastic will end up in that spot. We built this model by considering the paths of particles under the influence of lake currents, which came from a forecasting model called the Finite Volume Community Ocean Model (FVCOM).<br><br>
+            Our inspiration for this site came from the <a style="display: inline" href="https://plasticadrift.org/">existing global version</a>.<br><br>
+            If you have questions, <a style="display: inline" href="mailto:jmd2924@rit.edu">send me an email</a>.
+        </div>    
 		</div>
 	</body>
 </html>
