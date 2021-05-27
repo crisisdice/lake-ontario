@@ -1,3 +1,6 @@
+:root {
+  --width: 70%;
+}
 body
 {
 	font-family: 'Helvetica', 'Arial', sans-serif;
@@ -8,17 +11,34 @@ body
 	font-size: 30pt;
 	font-weight: bold;
 	background-color: #ABDFCA;
-	width: 720pt;
-	margin: auto;
+	width: var(--width);
+	margin: 0 auto;
+    text-align: center;
 }
 .options {
 	font-size: 20pt;
-	width: 720pt;
+	width: var(--width);
 	background-color: #ABDFCA;
-	margin: auto;
+	margin: 0 auto;
+}
+#display {
+    margin: 0 auto;
+    text-align: center;
+    width: var(--width);
+    resize: horizontal;
+    overflow: hidden;
+    height: auto;
+}
+
+.description {
+	font-size: 20pt;
+	width: var(--width);
+	background-color: #ABDFCA;
+    margin: 0 auto;
+	text-align: block;
 }
 .container {
-	text-align: center;
+	/* text-align: center; */
 }
 #season, .slider, .label {
 	display: inline;
