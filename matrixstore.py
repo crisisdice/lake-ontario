@@ -13,9 +13,12 @@ class MatrixStore:
 			multiplicand = copy(transition_matrix)
 			
 			for power in range(2, steps):
-				result = csr_matrix(transition_matrix) * csr_matrix(multiplicand)
-				self.store(result.toarray(), season, power)
-				multiplicand = result
+				try:
+					multiplicand = self.retrieve(season, power)
+				except FileNotFoundError:
+					result = csr_matrix(transition_matrix) * csr_matrix(multiplicand)
+					self.store(result.toarray(), season, power)
+					multiplicand = result
 
 	def store(self, array, season, power):
 		key = self.template(season, power)

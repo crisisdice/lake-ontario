@@ -51,8 +51,8 @@ if __name__ == "__main__":
 	define("port", default="8000", help="Listening port")
 	define("seed", default="", help="Comma delimited seasons to calculate .mat files for")
 	define("loglevel", default="INFO", help="Python log level")
-	define("steps", default=10, help="Amount of time steps to calculate and show")
-	define("dim", default=4732, help="Transition matrix row size")
+	define("steps", default=20, help="Amount of time steps to calculate and show")
+	define("dim", default=746, help="Transition matrix row size")
 	define("seasons", default="spring,summer,fall,winter", help="Comma delimited seasons to show")
 	define("cmap", default="plasma", help="Matplotlib colormap to apply to matrix")
 	#TODO recompile svg for new cmap and html for seasons
