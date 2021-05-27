@@ -43,7 +43,6 @@ class WebSocket(WebSocketHandler):
 			debug(f"Connection from {self.ip} closed by client")
 		except (KeyError, ValueError, JSONDecodeError):
 			error(f"Faulty request {message} from {self.ip}")
-			raise
 		except Exception as ex:
 			error(ex)
 		finally:

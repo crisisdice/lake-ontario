@@ -55,7 +55,7 @@ if __name__ == "__main__":
 	define("dim", default=4732, help="Transition matrix row size")
 	define("seasons", default="spring,summer,fall,winter", help="Comma delimited seasons to show")
 	define("cmap", default="plasma", help="Matplotlib colormap to apply to matrix")
-	#TODO recompile svg
+	#TODO recompile svg for new cmap and html for seasons
 
 	options.parse_command_line()
 
